@@ -19,7 +19,6 @@ class LocalStorage {
 			fw = new FileWriter(path);
 			bw = new BufferedWriter(fw);
 			bw.write(text);
-			System.out.println(path);
 			if (bw != null)
 				bw.close();
 			if (fw != null)
@@ -34,7 +33,6 @@ class LocalStorage {
 			fw = new FileWriter(path, true);
 			bw = new BufferedWriter(fw);
 			bw.write(text);
-			System.out.println(path);
 			if (bw != null)
 				bw.close();
 			if (fw != null)

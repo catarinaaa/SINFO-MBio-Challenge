@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
-import java.io.*;
 import java.time.LocalDateTime;
+import java.io.InputStreamReader;
 
 class StatusChecker{
 
@@ -17,10 +17,12 @@ class StatusChecker{
 
 	TreeMap<String, String> sv = new TreeMap<String,String>();
 	TreeMap statusSv = new TreeMap();
+	LocalStorage ls = new LocalStorage();
+
 
 	private StatusChecker() {
 		statusSv.put("bitbucket", "/api/v2/status.json");
-		statusSv.put("github", "/api/status.json");
+		statusSv.put("github", "/api/v2/status.json");
 		statusSv.put("slack", "/api/current");
 		try {
 			File file = new File(System.getProperty("user.dir") + "/config.txt");
@@ -45,11 +47,10 @@ class StatusChecker{
 		Set<String> keys = sv.keySet();
 
 		for(String key : keys) {
-			String tmp = "[" + key + "]" + " " + LocalDateTime.now() + " - " + getStatus(key);
-			System.out.println(tmp);
+			String tmp = "[" + key + "]" + " " + LocalDateTime.now() + " - " + getStatus(key) + "\n";
+			System.out.print(tmp);
+			ls.append(tmp);
 		}
-
-
 	}
 
 	public String getStatus(String service) {
@@ -68,19 +69,16 @@ class StatusChecker{
 				throw new IOException();
 
 			txt = getInfo(url, service);
+			return parser(txt);
 		} 
-		catch(Exception e) {
+		catch(IOException e) {
 			System.out.println("Impossible to retrieve data");
+			return "unknown";
 		}
-
-
-		return parser(txt);
 	}
 
 	public String getInfo(URL url, String service) throws IOException {
-		url = new URL(url.toString() + statusSv.get(service));
-		System.out.println(url);
-		
+		url = new URL(url.toString() + statusSv.get(service));		
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
         String inputLine;
         String result = "";
@@ -91,16 +89,20 @@ class StatusChecker{
 	}
 	
 	public String parser(String text){
-		String[] tokens = text.split(":");
+		String[] tokens = text.split("[:{,}]+");
+		Boolean inStatus = false;
 		for(int i = 0; i < tokens.length; i++) {
 			if(tokens[i].contains("status"))
-				System.out.println(tokens[i]);
-				if(tokens[i+1].contains("ok") || tokens[i+1].contains("good") || tokens[i+3].contains("All Systems Operational"))
-					return "up";
-				else
-					return "down";
+				inStatus = true;
+			if(inStatus && (tokens[i].contains("ok") || tokens[i].contains("All Systems Operational")))
+				return "up";
 		}
-		return "unknow";
+		if(inStatus) 
+			// status is in json but not up/ok/operational
+			return "down";
+		else
+			// invalid json format
+			return "unknow";
 	}
 
 }
