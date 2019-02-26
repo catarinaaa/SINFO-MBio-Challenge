@@ -52,23 +52,23 @@ class main {
 					printError("Invalid option");
 				if(refresh != null && (refresh.length > 1 || !refresh[0].matches("\\d+")))
 					printError("Invalid option argument");
-				st.fetch(refresh);
+				st.fetch(refresh, only, exclude);
 				break;
 
 			case "history":
 				if(format != null || refresh != null || merge != null || exclude != null)
 					printError("Invalid option");
-				st.history();
+				st.history(only);
 				break;
 
 			case "backup":
 				if(refresh != null || merge != null || exclude != null)
 					printError("Invalid option");
-				if(format != null && (format[0] != "csv" || format[0] != "txt"))
+				if(format != null && (!format[0].equals("csv") && !format[0].equals("txt")))
 					printError("Invalid argument option");
 				if(args.length == 1)
 					printError("Must provide a file");
-				st.backup(args[1], format[0]);
+				st.backup(args[1], format);
 				break;
 
 			case "restore":
@@ -94,14 +94,14 @@ class main {
 				"\tpoll [--only | --exclude]\t\tRetrieves the status of all configured services\n" +
 				"\tfetch [--refresh] [--only | --exclude]\tRetrieves the status of all configured services in intervals\n" +
 				"\thistory [--only]\t\t\tOutputs all data from local storage\n" +
-				"\tbackup <file>\t\t\t\tBackups the current internal state to a file\n" +
+				"\tbackup <file> [--format]\t\tBackups the current internal state to a file\n" +
 				"\trestore <file> [--merge]\t\tImports the internal state from a file\n" +
 				"\tservices\t\t\t\tList all configured services\n" +
 				"\thelp\t\t\t\t\tShows help screen\n"; 
 				String opt = "\nOptions:\n\t--only=<name>\t\tSelects a specific set of services\n" +
-				"\t--exclude=<name>\t\tExcludes a specific set of services\n" +
+				"\t--exclude=<name>\tExcludes a specific set of services\n" +
 				"\t--refresh=<number>\tChoose polling interval [default: 5]\n" +
-				"\t--merge\t\tMerge the content of the file\n"+
+				"\t--merge=<boolean>\tMerge the content of the file [default: false]\n"+
 				"\t--format=<name>\t\tSelects the format of the output file\n";
 				System.out.print(cmd + opt);
 				break;

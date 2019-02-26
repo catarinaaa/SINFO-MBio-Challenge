@@ -60,7 +60,7 @@ class LocalStorage {
 		return "";
 	}
 
-	public String readLine() {
+	public String readLine(String[] only) {
 		try {
 			File file = new File(path);
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -69,8 +69,14 @@ class LocalStorage {
 				if(!isValid(line)) {
 					System.err.println("File " + line + " is invalid!");
 					System.exit(1);
-				} else 
-					result += line + "\n";
+				} else {
+					if(only != null) {
+						for(String arg : only)
+							if(line.contains(arg))
+								result += line + "\n";
+					} else
+						result += line + "\n";
+				}
 			return result;
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -83,7 +89,5 @@ class LocalStorage {
 		Matcher m = p.matcher(line);
 		return m.matches();
 	}
-
-	public void filter() {}
 
 }

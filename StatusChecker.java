@@ -101,6 +101,26 @@ class StatusChecker{
 			return "unknown";
 	}
 
+	public String dataToCSV(String text) {
+		String[] parsed = text.split("\\n");
+		String result = "";
+		for(String line : parsed) {
+			String[] parsedLine = line.split("[\\[\\]\\s]+");
+			result += parsedLine[1] + "," + parsedLine[2] + "," + parsedLine[4] + "\n";
+		}
+		return result;
+	}
+
+	public String dataToTXT(String text) {
+		String[] parsed = text.split("\\n");
+		String result = "";
+		for(String line : parsed) {
+			String[] parsedLine = line.split("[\\[\\]\\s]+");
+			result += parsedLine[1] + " was " + parsedLine[4] + " on " + parsedLine[2] + "\n";
+		}
+		return result;
+	}
+
 	public void poll(String[] only, String[] exclude){
 		Set<String> keys = sv.keySet();
 
@@ -120,12 +140,12 @@ class StatusChecker{
 		}
 	}
 
-	public void fetch(String[] param) {
+	public void fetch(String[] param, String[] only, String[] exclude) {
 		int interval = (param == null) ? 5 : Integer.parseInt(param[0]);
 		System.out.println("Polling services every " + interval + " seconds\nPress CTRL-C to abort.");
 		while(true) {
 			System.out.println("Polling services...");
-			poll(null, null);
+			poll(only, exclude);
 			try {
 				Thread.sleep(interval * 1000);
 			} catch (InterruptedException e) {
@@ -134,14 +154,19 @@ class StatusChecker{
 		}
 	}
 
-	public void history() {
-		System.out.print(ls.read());
+	public void history(String[] only) {
+		System.out.print(ls.readLine(only));
 	}
 
 
-	public void backup(String path, String format) {
+	public void backup(String path, String[] format) {
 		LocalStorage newLs = new LocalStorage(path);
 		String data = ls.read();
+		if(format == null) {}
+		else if(format[0].equals("csv"))
+			data = dataToCSV(data);
+		else if(format[0].equals("txt"))
+			data = dataToTXT(data);
 		newLs.write(data);
 	}
 
@@ -149,7 +174,7 @@ class StatusChecker{
 		LocalStorage newLs = new LocalStorage(path);
 		String line = "";
 		String result = "";
-		result = newLs.readLine();
+		result = newLs.readLine(null);
 
 		if (merge == null)
 			ls.write(result);
