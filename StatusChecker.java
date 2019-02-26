@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.io.IOException;
@@ -41,16 +42,6 @@ class StatusChecker{
 		if (instance == null)
 			instance = new StatusChecker();
 		return instance;
-	}
-
-	public void poll(){
-		Set<String> keys = sv.keySet();
-
-		for(String key : keys) {
-			String tmp = "[" + key + "]" + " " + LocalDateTime.now() + " - " + getStatus(key) + "\n";
-			System.out.print(tmp);
-			ls.append(tmp);
-		}
 	}
 
 	public String getStatus(String service) {
@@ -103,6 +94,34 @@ class StatusChecker{
 		else
 			// invalid json format
 			return "unknow";
+	}
+
+	public void poll(){
+		Set<String> keys = sv.keySet();
+
+		for(String key : keys) {
+			String tmp = "[" + key + "]" + " " + LocalDateTime.now() + " - " + getStatus(key) + "\n";
+			System.out.print(tmp);
+			ls.append(tmp);
+		}
+	}
+	
+	public void fetch() {
+		fetch(5);
+	}
+
+	public void fetch(int interval) {
+		System.out.println("Polling services every " + interval + " seconds\nPress CTRL-C to abort.");
+		while(true) {
+			System.out.println("Polling services...");
+			poll();
+			try {
+				Thread.sleep(interval * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }
