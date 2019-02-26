@@ -127,4 +127,12 @@ class StatusChecker{
 		System.out.print(ls.read());
 	}
 
+	public void services() {
+		Set<String> keys = sv.keySet();
+		System.out.println("List of configured services");
+		for(String key : keys) {
+			System.out.println("\tService name: " + key + "\t\t" + "Service endpoint: " + sv.get(key));
+		}
+	}
+
 }
