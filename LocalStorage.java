@@ -49,7 +49,7 @@ class LocalStorage {
 		String line = "";
 		String result = "";
 		while((line = br.readLine()) != null)
-			result += line;
+			result += line + "\n";
 		return result;
 	} catch(Exception e) {
 		e.printStackTrace();

@@ -121,7 +121,10 @@ class StatusChecker{
 				e.printStackTrace();
 			}
 		}
+	}
 
+	public void history() {
+		System.out.print(ls.read());
 	}
 
 }

@@ -47,11 +47,15 @@ class main {
 			case "fetch":
 				if(format != null || merge != null)
 					printError("Invalid option");
-				if(refresh.length > 1 || !refresh[0].matches("\\d+"))
+				if(refresh != null && (refresh.length > 1 || !refresh[0].matches("\\d+")))
 					printError("Invalid option argument");
-				st.fetch(Integer.parseInt(refresh[0]));
+				if(refresh != null)
+					st.fetch(Integer.parseInt(refresh[0]));
+				else
+					st.fetch();
 				break;
 			case "history":
+				st.history();
 				break;
 			case "backup":
 				
