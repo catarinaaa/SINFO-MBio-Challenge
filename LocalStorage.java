@@ -10,8 +10,10 @@ class LocalStorage {
 	BufferedWriter bw;
 	FileWriter fw;
 
-	public LocalStorage() {
-		
+	public LocalStorage() {}
+
+	public LocalStorage(String path) {
+		this.path = path;
 	}
 
 	public void write(String text) {
@@ -44,18 +46,17 @@ class LocalStorage {
 
 	public String read() {
 		try {
-		File file = new File(path);
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line = "";
-		String result = "";
-		while((line = br.readLine()) != null)
-			result += line + "\n";
-		return result;
-	} catch(Exception e) {
-		e.printStackTrace();
-	}
-	return "";
-	
+			File file = new File(path);
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = "";
+			String result = "";
+			while((line = br.readLine()) != null)
+				result += line + "\n";
+			return result;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	public void filter() {}

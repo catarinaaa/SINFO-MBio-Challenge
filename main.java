@@ -57,11 +57,19 @@ class main {
 				break;
 
 			case "history":
+				if(format != null || refresh != null || merge != null || except != null)
+					printError("Invalid option");
 				st.history();
 				break;
 
 			case "backup":
-				
+				if(refresh != null || merge != null || except != null)
+					printError("Invalid option");
+				if(format != null && (format[0] != "csv" || format[0] != "txt"))
+					printError("Invalid argument option");
+				if(args.length == 1)
+					printError("Must provide a file");
+				st.backup(args[1], format);
 				break;
 
 			case "restore":

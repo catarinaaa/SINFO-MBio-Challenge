@@ -127,6 +127,17 @@ class StatusChecker{
 		System.out.print(ls.read());
 	}
 
+
+	public void backup(String path, String[] format) {
+		LocalStorage newLs = new LocalStorage(path);
+		String data = ls.read();
+		newLs.write(data);
+	}
+
+	public void restore() {
+		
+	}
+
 	public void services() {
 		Set<String> keys = sv.keySet();
 		System.out.println("List of configured services");
