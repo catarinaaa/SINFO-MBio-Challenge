@@ -4,13 +4,14 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 class LocalStorage {
 	String path = System.getProperty("user.dir") + "/data.txt";
+	String format = "\\[\\w+\\] [0-9]{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d - (unknow|up|down) ";
 	BufferedWriter bw;
 	FileWriter fw;
-
-	public LocalStorage() {}
 
 	public LocalStorage(String path) {
 		this.path = path;
@@ -57,6 +58,30 @@ class LocalStorage {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public String readLine() {
+		try {
+			File file = new File(path);
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String result = "", line = "";
+			while((line = br.readLine()) != null)
+				if(!isValid(line)) {
+					System.err.println("File " + line + " is invalid!");
+					System.exit(1);
+				} else 
+					result += line + "\n";
+			return result;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean isValid(String line) {
+		Pattern p = Pattern.compile(format);
+		Matcher m = p.matcher(line);
+		return m.matches();
 	}
 
 	public void filter() {}

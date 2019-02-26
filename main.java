@@ -11,7 +11,7 @@ class main {
 	static StatusChecker st = StatusChecker.getInstance();
 
 	public static void printError(String msg) {
-		System.out.println(msg);
+		System.err.println(msg);
 		System.exit(1);
 	}
 
@@ -69,17 +69,27 @@ class main {
 					printError("Invalid argument option");
 				if(args.length == 1)
 					printError("Must provide a file");
-				st.backup(args[1], format);
+				st.backup(args[1], format[0]);
 				break;
 
 			case "restore":
+				if(format != null || refresh != null || only != null || except != null)
+					printError("Invalid option");
+				if(merge != null && merge[0] != "true" && merge[0] != "false")
+					printError("Invalid argument option");
+				if(args.length == 1)
+					printError("Must provide a file");
+				st.restore(args[1], (merge == null) ? "false" : merge[0]);
 				break;
 
 			case "services":
-				st.services();
+				if(format != null || refresh != null || merge != null || except != null || only != null)
+					printError("Invalid option");				st.services();
 				break;
 
 			case "help":
+				if(format != null || refresh != null || merge != null || except != null || only != null)
+					printError("Invalid option");
 				String cmd = "Usage:\n\ttool command [options]\n\nCommand:\n" +
 				"\tpoll [--only | --except]\t\tRetrieves the status of all configured services\n" +
 				"\tfetch [--refresh] [--only | --except]\tRetrieves the status of all configured services in intervals\n" +

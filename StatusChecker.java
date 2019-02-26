@@ -18,7 +18,7 @@ class StatusChecker{
 
 	TreeMap<String, String> sv = new TreeMap<String,String>();
 	TreeMap statusSv = new TreeMap();
-	LocalStorage ls = new LocalStorage();
+	LocalStorage ls = new LocalStorage( System.getProperty("user.dir") + "/data.txt");
 
 
 	private StatusChecker() {
@@ -128,14 +128,22 @@ class StatusChecker{
 	}
 
 
-	public void backup(String path, String[] format) {
+	public void backup(String path, String format) {
 		LocalStorage newLs = new LocalStorage(path);
 		String data = ls.read();
 		newLs.write(data);
 	}
 
-	public void restore() {
-		
+	public void restore(String path, String merge) {
+		LocalStorage newLs = new LocalStorage(path);
+		String line = "";
+		String result = "";
+		result = newLs.readLine();
+
+		if (merge == "true")
+			ls.append(result);
+		else
+			ls.write(result);
 	}
 
 	public void services() {
