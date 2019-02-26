@@ -32,7 +32,7 @@ class main {
 		if(args.length == 0) printError("No command introduced");
 		
 		String[] only = parseOption(args, "only");
-		String[] except = parseOption(args, "except") ;
+		String[] exclude = parseOption(args, "exclude") ;
 		String[] format = parseOption(args, "format");
 		String[] merge = parseOption(args, "merge");
 		String[] refresh = parseOption(args, "refresh");
@@ -42,7 +42,9 @@ class main {
 			case "poll": 
 				if(format != null || refresh != null || merge != null)
 					printError("Invalid option");
-				st.poll();
+				if(only != null && exclude != null)
+					printError("Invalid option");
+				st.poll(only, exclude);
 				break;
 
 			case "fetch":
@@ -50,20 +52,17 @@ class main {
 					printError("Invalid option");
 				if(refresh != null && (refresh.length > 1 || !refresh[0].matches("\\d+")))
 					printError("Invalid option argument");
-				if(refresh != null)
-					st.fetch(Integer.parseInt(refresh[0]));
-				else
-					st.fetch();
+				st.fetch(refresh);
 				break;
 
 			case "history":
-				if(format != null || refresh != null || merge != null || except != null)
+				if(format != null || refresh != null || merge != null || exclude != null)
 					printError("Invalid option");
 				st.history();
 				break;
 
 			case "backup":
-				if(refresh != null || merge != null || except != null)
+				if(refresh != null || merge != null || exclude != null)
 					printError("Invalid option");
 				if(format != null && (format[0] != "csv" || format[0] != "txt"))
 					printError("Invalid argument option");
@@ -73,7 +72,7 @@ class main {
 				break;
 
 			case "restore":
-				if(format != null || refresh != null || only != null || except != null)
+				if(format != null || refresh != null || only != null || exclude != null)
 					printError("Invalid option");
 				if(merge != null && !merge[0].equals("true"))
 					printError("Invalid argument option");
@@ -83,29 +82,30 @@ class main {
 				break;
 
 			case "services":
-				if(format != null || refresh != null || merge != null || except != null || only != null)
+				if(format != null || refresh != null || merge != null || exclude != null || only != null)
 					printError("Invalid option");				
 				st.services();
 				break;
 
 			case "help":
-				if(format != null || refresh != null || merge != null || except != null || only != null)
+				if(format != null || refresh != null || merge != null || exclude != null || only != null)
 					printError("Invalid option");
 				String cmd = "Usage:\n\ttool command [options]\n\nCommand:\n" +
-				"\tpoll [--only | --except]\t\tRetrieves the status of all configured services\n" +
-				"\tfetch [--refresh] [--only | --except]\tRetrieves the status of all configured services in intervals\n" +
+				"\tpoll [--only | --exclude]\t\tRetrieves the status of all configured services\n" +
+				"\tfetch [--refresh] [--only | --exclude]\tRetrieves the status of all configured services in intervals\n" +
 				"\thistory [--only]\t\t\tOutputs all data from local storage\n" +
 				"\tbackup <file>\t\t\t\tBackups the current internal state to a file\n" +
 				"\trestore <file> [--merge]\t\tImports the internal state from a file\n" +
 				"\tservices\t\t\t\tList all configured services\n" +
 				"\thelp\t\t\t\t\tShows help screen\n"; 
 				String opt = "\nOptions:\n\t--only=<name>\t\tSelects a specific set of services\n" +
-				"\t--except=<name>\t\tExcludes a specific set of services\n" +
+				"\t--exclude=<name>\t\tExcludes a specific set of services\n" +
 				"\t--refresh=<number>\tChoose polling interval [default: 5]\n" +
 				"\t--merge\t\tMerge the content of the file\n"+
 				"\t--format=<name>\t\tSelects the format of the output file\n";
 				System.out.print(cmd + opt);
 				break;
+
 			default:
 				System.out.println("Invalid command");
 		}

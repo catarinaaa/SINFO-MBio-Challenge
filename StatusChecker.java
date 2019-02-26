@@ -3,8 +3,10 @@ import java.util.TreeMap;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Arrays;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -50,6 +52,7 @@ class StatusChecker{
 			URL url = new URL(sv.get(service).toString());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setFollowRedirects(true);
+			con.setConnectTimeout(10000); //10 seconds timeout
 			con.setRequestMethod("GET");
 			int responseCode = con.getResponseCode();
 			if(responseCode == 302)
@@ -61,9 +64,11 @@ class StatusChecker{
 
 			txt = getInfo(url, service);
 			return parser(txt);
-		} 
-		catch(IOException e) {
-			System.out.println("Impossible to retrieve data");
+		} catch(SocketTimeoutException e) {
+			System.err.println("Connection timed out");
+			return "unknown";
+		} catch(IOException e) {
+			System.err.println("Impossible to retrieve data");
 			return "unknown";
 		}
 	}
@@ -96,8 +101,17 @@ class StatusChecker{
 			return "unknown";
 	}
 
-	public void poll(){
+	public void poll(String[] only, String[] exclude){
 		Set<String> keys = sv.keySet();
+
+		if(only != null) {
+			keys.retainAll(Arrays.asList(only));
+		}
+
+		if(exclude != null) {
+			for(String arg: exclude)
+				keys.remove(arg);
+		}
 
 		for(String key : keys) {
 			String tmp = "[" + key + "]" + " " + LocalDateTime.now() + " - " + getStatus(key) + "\n";
@@ -105,16 +119,13 @@ class StatusChecker{
 			ls.append(tmp);
 		}
 	}
-	
-	public void fetch() {
-		fetch(5);
-	}
 
-	public void fetch(int interval) {
+	public void fetch(String[] param) {
+		int interval = (param == null) ? 5 : Integer.parseInt(param[0]);
 		System.out.println("Polling services every " + interval + " seconds\nPress CTRL-C to abort.");
 		while(true) {
 			System.out.println("Polling services...");
-			poll();
+			poll(null, null);
 			try {
 				Thread.sleep(interval * 1000);
 			} catch (InterruptedException e) {
