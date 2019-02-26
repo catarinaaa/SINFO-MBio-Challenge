@@ -93,7 +93,7 @@ class StatusChecker{
 			return "down";
 		else
 			// invalid json format
-			return "unknow";
+			return "unknown";
 	}
 
 	public void poll(){
@@ -134,16 +134,16 @@ class StatusChecker{
 		newLs.write(data);
 	}
 
-	public void restore(String path, String merge) {
+	public void restore(String path, String[] merge) {
 		LocalStorage newLs = new LocalStorage(path);
 		String line = "";
 		String result = "";
 		result = newLs.readLine();
 
-		if (merge == "true")
-			ls.append(result);
-		else
+		if (merge == null)
 			ls.write(result);
+		else
+			ls.append(result);
 	}
 
 	public void services() {

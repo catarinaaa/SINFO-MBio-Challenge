@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 
 class LocalStorage {
 	String path = System.getProperty("user.dir") + "/data.txt";
-	String format = "\\[\\w+\\] [0-9]{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d - (unknow|up|down) ";
+	String format = "\\[\\w+\\] \\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d - (unknown|up|down)";
 	BufferedWriter bw;
 	FileWriter fw;
 

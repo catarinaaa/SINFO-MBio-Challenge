@@ -75,16 +75,17 @@ class main {
 			case "restore":
 				if(format != null || refresh != null || only != null || except != null)
 					printError("Invalid option");
-				if(merge != null && merge[0] != "true" && merge[0] != "false")
+				if(merge != null && !merge[0].equals("true"))
 					printError("Invalid argument option");
 				if(args.length == 1)
 					printError("Must provide a file");
-				st.restore(args[1], (merge == null) ? "false" : merge[0]);
+				st.restore(args[1], merge);
 				break;
 
 			case "services":
 				if(format != null || refresh != null || merge != null || except != null || only != null)
-					printError("Invalid option");				st.services();
+					printError("Invalid option");				
+				st.services();
 				break;
 
 			case "help":
@@ -101,7 +102,7 @@ class main {
 				String opt = "\nOptions:\n\t--only=<name>\t\tSelects a specific set of services\n" +
 				"\t--except=<name>\t\tExcludes a specific set of services\n" +
 				"\t--refresh=<number>\tChoose polling interval [default: 5]\n" +
-				"\t--merge=<bool>\t\tMerge the content of the file or replace [default:false]\n"+
+				"\t--merge\t\tMerge the content of the file\n"+
 				"\t--format=<name>\t\tSelects the format of the output file\n";
 				System.out.print(cmd + opt);
 				break;
