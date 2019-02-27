@@ -168,6 +168,7 @@ class StatusChecker{
 		else if(format[0].equals("txt"))
 			data = dataToTXT(data);
 		newLs.write(data);
+		System.out.println("Local storage backup completed successfully");
 	}
 
 	public void restore(String path, String[] merge) {
@@ -180,6 +181,7 @@ class StatusChecker{
 			ls.write(result);
 		else
 			ls.append(result);
+		System.out.println("Local storage restore completed successfully");
 	}
 
 	public void services() {

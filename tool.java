@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 
 
 
-class main {
+class tool {
 	
 	static StatusChecker st = StatusChecker.getInstance();
 
