@@ -19,7 +19,7 @@ class StatusChecker{
 	private static StatusChecker instance = null;
 
 	TreeMap<String, String> sv = new TreeMap<String,String>();
-	TreeMap statusSv = new TreeMap();
+	TreeMap<String, String> statusSv = new TreeMap<String,String>();
 	LocalStorage ls = new LocalStorage( System.getProperty("user.dir") + "/data.txt");
 
 
